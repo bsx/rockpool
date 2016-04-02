@@ -24,6 +24,12 @@ public:
         DataLoggingSetSendEnable = 0x8B
     };
 
+    enum DataLoggingItemType {
+        ByteArray = 0x00,
+        UnsignedInt = 0x02,
+        SignedInt = 0x03
+    };
+
     explicit DataLoggingEndpoint(Pebble *pebble, WatchConnection *connection);
 
 signals:
@@ -34,6 +40,8 @@ private slots:
 private:
     Pebble *m_pebble;
     WatchConnection *m_connection;
+    void sendACK(quint8 sessionId);
+    void sendNACK(quint8 sessionId);
 };
 
 #endif // DATALOGGINGENDPOINT_H

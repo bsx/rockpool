@@ -8,6 +8,7 @@
 #include <QString>
 #include <QUuid>
 #include <QMap>
+#include <QDateTime>
 
 class WatchDataReader {
 public:
@@ -64,6 +65,11 @@ public:
         if (checkBad(16)) return QString();
         m_offset += 16;
         return QUuid::fromRfc4122(m_data.mid(m_offset - 16, 16));
+    }
+    QDateTime readTimestamp()
+    {
+        if (checkBad(4)) return QDateTime();
+        return QDateTime::fromTime_t(readLE<quint32>());
     }
     QByteArray readBytes(int n)
     {
