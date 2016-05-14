@@ -2,6 +2,10 @@
 #define DATALOGGINGENDPOINT_H
 
 #include <QObject>
+#include <QMap>
+#include <QString>
+#include <QUuid>
+#include <QDateTime>
 
 class Pebble;
 class WatchConnection;
@@ -38,10 +42,20 @@ private slots:
     void handleMessage(const QByteArray &data);
 
 private:
+    struct DataLoggingSession {
+        QUuid appUuid;
+        QDateTime timestamp;
+        quint32 logtag;
+        DataLoggingItemType itemType;
+        quint16 itemSize;
+    };
+
     Pebble *m_pebble;
     WatchConnection *m_connection;
+    QMap<quint8, DataLoggingSession> m_sessions;
     void sendACK(quint8 sessionId);
     void sendNACK(quint8 sessionId);
+    void requestSessionList();
 };
 
 #endif // DATALOGGINGENDPOINT_H
