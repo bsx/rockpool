@@ -40,6 +40,7 @@ signals:
 
 private slots:
     void handleMessage(const QByteArray &data);
+    void requestSessionList();
 
 private:
     struct DataLoggingSession {
@@ -55,7 +56,6 @@ private:
     QMap<quint8, DataLoggingSession> m_sessions;
     void sendACK(quint8 sessionId);
     void sendNACK(quint8 sessionId);
-    void requestSessionList();
 };
 
 #endif // DATALOGGINGENDPOINT_H

@@ -16,6 +16,7 @@ DataLoggingEndpoint::DataLoggingEndpoint(Pebble *pebble, WatchConnection *connec
     m_connection(connection)
 {
     m_connection->registerEndpointHandler(WatchConnection::EndpointDataLogging, this, "handleMessage");
+    connect(m_connection, &WatchConnection::watchConnected, this, &DataLoggingEndpoint::requestSessionList);
 }
 
 void DataLoggingEndpoint::handleMessage(const QByteArray &data)
@@ -51,11 +52,20 @@ void DataLoggingEndpoint::handleMessage(const QByteArray &data)
         qDebug() << "Despooling data: Session:" << sessionId << "Items left:" << itemsLeft << "CRC:" << crc;
 
         if (m_sessions.contains(sessionId)) {
-            qDebug() << "found matching session entry:" << sessionId << "App:" << m_sessions[sessionId].appUuid << "Logtag:" << m_sessions[sessionId].logtag;
+            DataLoggingSession session = m_sessions[sessionId];
+            qDebug() << "found matching session entry:" << sessionId << "App:" << session.appUuid << "Logtag:" << session.logtag;
+            int itemCount = 0;
+            while (!reader.checkBad(session.itemSize)) {
+                QByteArray item = reader.readBytes(session.itemSize);
+                qDebug() << "read item:" << item.toHex();
+                m_pebble->dataLoggingMessageReceived(session.appUuid.toString(), session.logtag, item);
+                itemCount++;
+            }
+            qDebug() << "done reading" << itemCount << "items";
             sendACK(sessionId);
         } else {
             qDebug() << "no matching session found for id:" << sessionId << "requesting session list";
-            sendNACK(sessionId); // NACK will hopefully mean pebble retries later
+            sendNACK(sessionId); // send NACK so pebble retries that message later
             requestSessionList();
         }
 
@@ -106,6 +116,7 @@ void DataLoggingEndpoint::sendNACK(quint8 sessionId)
  */
 void DataLoggingEndpoint::requestSessionList()
 {
+    qDebug() << "requesting list of open DataLogging sessions";
     QByteArray reply;
     WatchDataWriter writer(&reply);
     writer.write<quint8>(DataLoggingReportOpenSessions);

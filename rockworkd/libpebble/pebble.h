@@ -170,6 +170,8 @@ signals:
     void healtParamsChanged();
     void devConServerStateChanged(bool state);
     void devConCloudStateChanged(bool state);
+
+    void dataLoggingMessageReceived(const QString appUuid, const quint32 logtag, const QByteArray data);
 private:
     void setHardwareRevision(HardwareRevision hardwareRevision);
 

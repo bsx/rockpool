@@ -35,6 +35,8 @@ signals:
     void DevConnectionChanged(const bool state);
     void DevConnCloudChanged(const bool state);
 
+    void DataLoggingMessageReceived(const QString appUuid, const quint32 logtag, const QByteArray data);
+
 public slots:
     QString Address() const;
     QString Name() const;
