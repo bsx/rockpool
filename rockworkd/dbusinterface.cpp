@@ -22,7 +22,7 @@ DBusPebble::DBusPebble(Pebble *pebble, QObject *parent):
     connect(pebble, &Pebble::calendarSyncEnabledChanged, this, &DBusPebble::CalendarSyncEnabledChanged);
     connect(pebble, &Pebble::devConServerStateChanged, this, &DBusPebble::DevConnectionChanged);
     connect(pebble, &Pebble::devConCloudStateChanged, this, &DBusPebble::DevConnCloudChanged);
-    connect(pebble, &Pebble::dataLoggingMessageReceived, this, &DBusPebble::DataLoggingMessageReceived)
+    connect(pebble, &Pebble::dataLoggingMessageReceived, this, &DBusPebble::DataLoggingMessageReceived);
 }
 
 QString DBusPebble::Address() const
